@@ -9,8 +9,8 @@
  * https://github.com/shixiongfei/nanorpc-validator
  */
 
+import Ajv, { ValidateFunction } from "ajv";
 import { ulid } from "ulid";
-import { SchemaValidator, getAjvSchema } from "./validate.js";
 
 export type NanoRPC<M extends string, P extends Array<unknown>> = {
   id: string;
@@ -27,10 +27,14 @@ export type NanoReply<T> = {
   timestamp: number;
 };
 
+export type SchemaValidator<T> = ValidateFunction<T>;
+
 export class NanoValidator {
+  private readonly ajv: Ajv;
   private readonly validators: { [method: string]: SchemaValidator<unknown> };
 
   constructor() {
+    this.ajv = new Ajv();
     this.validators = {};
   }
 
@@ -49,14 +53,19 @@ export class NanoValidator {
     return this;
   }
 
-  addAjvSchema(method: string, filename: string, schema: string) {
-    const validator = getAjvSchema(filename, schema);
+  addAjvSchemas<T extends object>(schemas: T | T[]) {
+    this.ajv.addSchema(schemas);
+    return this;
+  }
+
+  addAjvSchema<T>(method: string, schema: string) {
+    const validator = this.ajv.getSchema<T>(`#/definitions/${schema}`);
 
     if (!validator) {
-      throw new Error(`Missing Ajv Schema ${filename} ${schema}`);
+      throw new Error(`Missing Ajv Schema ${schema}`);
     }
 
-    return this.addValidator(method, validator);
+    return this.addValidator<T>(method, validator);
   }
 }
 
