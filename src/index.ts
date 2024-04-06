@@ -53,7 +53,7 @@ export class NanoValidator {
     return this;
   }
 
-  addAjvSchemas<T extends object>(schemas: T | T[]) {
+  addAjvSchemas(schemas: object | object[]) {
     this.ajv.addSchema(schemas);
     return this;
   }
