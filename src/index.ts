@@ -23,7 +23,7 @@ export type NanoReply<T> = {
   id: string;
   code: number;
   message: string;
-  data?: { value: T };
+  value?: T;
   timestamp: number;
 };
 
@@ -87,6 +87,6 @@ export const createNanoReply = <T>(
   message: string,
   value?: T,
 ): NanoReply<T> =>
-  value
-    ? { id, code, message, data: { value }, timestamp: Date.now() }
+  code === 0
+    ? { id, code, message, value, timestamp: Date.now() }
     : { id, code, message, timestamp: Date.now() };
