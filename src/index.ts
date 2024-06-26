@@ -12,9 +12,9 @@
 import Ajv, { ValidateFunction } from "ajv";
 import { ulid } from "ulid";
 
-export type NanoRPC<M extends string, P extends Array<unknown>> = {
+export type NanoRPC<P extends Array<unknown>> = {
   id: string;
-  method: M;
+  method: string;
   arguments: P;
   timestamp: number;
 };
@@ -71,10 +71,10 @@ export class NanoValidator {
 
 export const createNanoValidator = () => new NanoValidator();
 
-export const createNanoRPC = <M extends string, P extends Array<unknown>>(
-  method: M,
+export const createNanoRPC = <P extends Array<unknown>>(
+  method: string,
   args: P,
-): NanoRPC<M, P> => ({
+): NanoRPC<P> => ({
   id: ulid(),
   method,
   arguments: args,
