@@ -14,5 +14,5 @@ import { createNanoRPC, createNanoRPCError, createNanoReply } from "./index.js";
 console.log(createNanoRPC("add", [1, 2]));
 console.log(createNanoRPC("login", { user: "root", passwd: "123456" }));
 console.log(createNanoRPC("logout"));
-console.log(createNanoReply("123", 200, [3]));
+console.log(createNanoReply("123", 200, 3));
 console.log(createNanoRPCError("123", 503, -1, "Something error"));

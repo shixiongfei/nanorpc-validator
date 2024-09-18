@@ -18,7 +18,7 @@ export type NanoRPC<T extends object> = {
   params?: T;
 };
 
-export type NanoReply<T extends object> = {
+export type NanoReply<T> = {
   id: string;
   status: number;
   error?: { code: number; message: string };
@@ -85,7 +85,7 @@ export const createNanoRPC = <T extends object>(
 ): NanoRPC<T> =>
   params ? { id: ulid(), method, params } : { id: ulid(), method };
 
-export const createNanoReply = <T extends object>(
+export const createNanoReply = <T>(
   id: string,
   status: number,
   result: T,
