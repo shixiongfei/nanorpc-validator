@@ -1,6 +1,6 @@
 {
   "name": "nanorpc-validator",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "NanoRPC protocol validator.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
