@@ -12,20 +12,28 @@
 import Ajv, { ValidateFunction } from "ajv";
 import { ulid } from "ulid";
 
-export type NanoRPC<P extends Array<unknown>> = {
+export type NanoRPC<T extends object> = {
   id: string;
   method: string;
-  arguments: P;
-  timestamp: number;
+  params?: T;
 };
 
-export type NanoReply<T> = {
+export type NanoReply<T extends object> = {
   id: string;
-  code: number;
-  message: string;
-  value?: T;
-  timestamp: number;
+  status: number;
+  error?: { code: number; message: string };
+  result?: T;
 };
+
+export class NanoRPCError extends Error {
+  readonly code: number;
+
+  constructor(code: number, message: string) {
+    super(message);
+    this.name = "NanoRPCError";
+    this.code = code;
+  }
+}
 
 export type SchemaValidator<T> = ValidateFunction<T>;
 
@@ -71,22 +79,21 @@ export class NanoValidator {
 
 export const createNanoValidator = () => new NanoValidator();
 
-export const createNanoRPC = <P extends Array<unknown>>(
+export const createNanoRPC = <T extends object>(
   method: string,
-  args: P,
-): NanoRPC<P> => ({
-  id: ulid(),
-  method,
-  arguments: args,
-  timestamp: Date.now(),
-});
+  params?: T,
+): NanoRPC<T> =>
+  params ? { id: ulid(), method, params } : { id: ulid(), method };
 
-export const createNanoReply = <T>(
+export const createNanoReply = <T extends object>(
   id: string,
+  status: number,
+  result: T,
+): NanoReply<T> => ({ id, status, result });
+
+export const createNanoRPCError = (
+  id: string,
+  status: number,
   code: number,
   message: string,
-  value?: T,
-): NanoReply<T> =>
-  code === 0
-    ? { id, code, message, value, timestamp: Date.now() }
-    : { id, code, message, timestamp: Date.now() };
+): NanoReply<never> => ({ id, status, error: { code, message } });
